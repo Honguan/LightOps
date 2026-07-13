@@ -48,7 +48,16 @@ atomic_link() {
 }
 
 health_check() {
-  curl -fsS --max-time 10 http://127.0.0.1:9080/api/health >/dev/null
+  local deadline=$((SECONDS + 30))
+  local remaining
+  while ((SECONDS < deadline)); do
+    remaining=$((deadline - SECONDS))
+    if curl -fsS --max-time "$remaining" http://127.0.0.1:9080/api/health >/dev/null; then
+      return 0
+    fi
+    ((SECONDS >= deadline)) || sleep 1
+  done
+  return 1
 }
 
 install_release() {
