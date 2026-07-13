@@ -1,0 +1,9 @@
+name: rust
+display_name: Rust
+description: Rust compiler and Cargo
+category: runtime
+packages: {apt-get: [rustc, cargo], dnf: [rust, cargo], yum: [rust, cargo]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

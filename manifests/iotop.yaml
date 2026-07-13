@@ -1,0 +1,9 @@
+name: iotop
+display_name: iotop
+description: I/O usage monitor
+category: system-tool
+packages: {apt-get: [iotop], dnf: [iotop], yum: [iotop]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

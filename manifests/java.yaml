@@ -1,0 +1,9 @@
+name: java
+display_name: OpenJDK
+description: Java development kit
+category: runtime
+packages: {apt-get: [default-jdk], dnf: [java-latest-openjdk-devel], yum: [java-latest-openjdk-devel]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

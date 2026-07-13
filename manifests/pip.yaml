@@ -1,0 +1,9 @@
+name: pip
+display_name: pip
+description: Python package installer
+category: runtime
+packages: {apt-get: [python3-pip], dnf: [python3-pip], yum: [python3-pip]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

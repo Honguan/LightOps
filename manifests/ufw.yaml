@@ -1,0 +1,9 @@
+name: ufw
+display_name: UFW
+description: Uncomplicated firewall
+category: security
+packages: {apt-get: [ufw], dnf: [ufw], yum: [ufw]}
+service: {name: ufw}
+ports: []
+config_paths: [/etc/ufw]
+log_paths: [/var/log/ufw.log]

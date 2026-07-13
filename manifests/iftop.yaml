@@ -1,0 +1,9 @@
+name: iftop
+display_name: iftop
+description: Network bandwidth monitor
+category: system-tool
+packages: {apt-get: [iftop], dnf: [iftop], yum: [iftop]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

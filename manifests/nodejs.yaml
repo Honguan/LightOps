@@ -1,0 +1,9 @@
+name: nodejs
+display_name: Node.js
+description: JavaScript runtime with npm
+category: runtime
+packages: {apt-get: [nodejs, npm], dnf: [nodejs, npm], yum: [nodejs, npm]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

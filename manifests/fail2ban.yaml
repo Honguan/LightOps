@@ -1,0 +1,9 @@
+name: fail2ban
+display_name: Fail2ban
+description: Intrusion prevention daemon
+category: security
+packages: {apt-get: [fail2ban], dnf: [fail2ban], yum: [fail2ban]}
+service: {name: fail2ban}
+ports: []
+config_paths: [/etc/fail2ban]
+log_paths: [/var/log/fail2ban.log]

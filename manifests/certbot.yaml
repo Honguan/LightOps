@@ -1,0 +1,9 @@
+name: certbot
+display_name: Certbot
+description: Let's Encrypt certificate client
+category: deployment-tool
+packages: {apt-get: [certbot], dnf: [certbot], yum: [certbot]}
+service: {}
+ports: []
+config_paths: [/etc/letsencrypt]
+log_paths: [/var/log/letsencrypt]

@@ -1,0 +1,9 @@
+name: htop
+display_name: htop
+description: Interactive process viewer
+category: system-tool
+packages: {apt-get: [htop], dnf: [htop], yum: [htop]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

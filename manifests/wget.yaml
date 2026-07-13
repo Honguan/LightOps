@@ -1,0 +1,9 @@
+name: wget
+display_name: wget
+description: Network file downloader
+category: deployment-tool
+packages: {apt-get: [wget], dnf: [wget], yum: [wget]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

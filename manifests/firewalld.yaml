@@ -1,0 +1,9 @@
+name: firewalld
+display_name: firewalld
+description: Dynamic firewall manager
+category: security
+packages: {apt-get: [firewalld], dnf: [firewalld], yum: [firewalld]}
+service: {name: firewalld}
+ports: []
+config_paths: [/etc/firewalld]
+log_paths: []

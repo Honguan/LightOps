@@ -1,0 +1,4 @@
+name: Node.js
+commands:
+  - [npm, ci]
+  - [npm, run, build]

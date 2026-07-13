@@ -1,0 +1,9 @@
+name: mysql
+display_name: MySQL
+description: Relational database server
+category: database
+packages: {apt-get: [mysql-server], dnf: [mysql-server], yum: [mysql-server]}
+service: {name: mysql}
+ports: [3306]
+config_paths: [/etc/mysql, /etc/my.cnf]
+log_paths: [/var/log/mysql]

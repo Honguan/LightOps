@@ -1,0 +1,9 @@
+name: go
+display_name: Go
+description: Go programming language toolchain
+category: runtime
+packages: {apt-get: [golang-go], dnf: [golang], yum: [golang]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

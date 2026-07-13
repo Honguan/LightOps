@@ -1,0 +1,9 @@
+name: python
+display_name: Python
+description: Python 3 runtime, pip, and venv
+category: runtime
+packages: {apt-get: [python3, python3-pip, python3-venv], dnf: [python3, python3-pip], yum: [python3, python3-pip]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

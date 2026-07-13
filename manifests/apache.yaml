@@ -1,0 +1,12 @@
+name: apache
+display_name: Apache HTTP Server
+description: General-purpose HTTP server
+category: web-server
+packages:
+  apt-get: [apache2]
+  dnf: [httpd]
+  yum: [httpd]
+service: {name: apache2}
+ports: [80, 443]
+config_paths: [/etc/apache2, /etc/httpd]
+log_paths: [/var/log/apache2, /var/log/httpd]

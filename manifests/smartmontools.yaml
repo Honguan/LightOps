@@ -1,0 +1,9 @@
+name: smartmontools
+display_name: smartmontools
+description: Storage health monitoring tools
+category: system-tool
+packages: {apt-get: [smartmontools], dnf: [smartmontools], yum: [smartmontools]}
+service: {name: smartd}
+ports: []
+config_paths: [/etc/smartd.conf]
+log_paths: []

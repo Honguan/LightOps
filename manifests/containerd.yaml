@@ -1,0 +1,9 @@
+name: containerd
+display_name: containerd
+description: Industry-standard container runtime
+category: container
+packages: {apt-get: [containerd], dnf: [containerd], yum: [containerd]}
+service: {name: containerd}
+ports: []
+config_paths: [/etc/containerd/config.toml]
+log_paths: []

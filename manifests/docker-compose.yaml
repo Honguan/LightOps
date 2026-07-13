@@ -1,0 +1,9 @@
+name: docker-compose
+display_name: Docker Compose Plugin
+description: Multi-container Docker application tooling
+category: container
+packages: {apt-get: [docker-compose-plugin], dnf: [docker-compose-plugin], yum: [docker-compose-plugin]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

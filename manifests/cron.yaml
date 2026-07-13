@@ -1,0 +1,9 @@
+name: cron
+display_name: cron
+description: Task scheduler
+category: deployment-tool
+packages: {apt-get: [cron], dnf: [cronie], yum: [cronie]}
+service: {name: cron}
+ports: []
+config_paths: [/etc/crontab, /etc/cron.d]
+log_paths: [/var/log/syslog]

@@ -1,0 +1,9 @@
+name: ncdu
+display_name: ncdu
+description: Disk usage analyzer
+category: system-tool
+packages: {apt-get: [ncdu], dnf: [ncdu], yum: [ncdu]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

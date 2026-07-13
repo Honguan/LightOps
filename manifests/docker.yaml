@@ -1,0 +1,12 @@
+name: docker
+display_name: Docker Engine
+description: Container runtime and Compose plugin
+category: container
+packages:
+  apt-get: [docker.io, docker-compose-plugin]
+  dnf: [docker, docker-compose-plugin]
+  yum: [docker, docker-compose-plugin]
+service: {name: docker}
+ports: []
+config_paths: [/etc/docker/daemon.json]
+log_paths: []

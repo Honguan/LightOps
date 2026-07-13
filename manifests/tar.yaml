@@ -1,0 +1,9 @@
+name: tar
+display_name: tar
+description: Archive utility
+category: deployment-tool
+packages: {apt-get: [tar], dnf: [tar], yum: [tar]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

@@ -1,0 +1,9 @@
+name: supervisor
+display_name: Supervisor
+description: Process control system
+category: deployment-tool
+packages: {apt-get: [supervisor], dnf: [supervisor], yum: [supervisor]}
+service: {name: supervisor}
+ports: []
+config_paths: [/etc/supervisor, /etc/supervisord.conf]
+log_paths: [/var/log/supervisor]

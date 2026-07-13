@@ -1,0 +1,20 @@
+[Unit]
+Description=LightOps Server Management Platform
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lightops
+Group=lightops
+EnvironmentFile=/etc/lightops/lightops.env
+WorkingDirectory=/opt/lightops/current
+ExecStart=/opt/lightops/current/venv/bin/uvicorn lightops.api:app --host 0.0.0.0 --port 9080
+Restart=on-failure
+RestartSec=5
+PrivateTmp=true
+ProtectHome=true
+ReadWritePaths=/var/lib/lightops /var/log/lightops /var/backups/lightops
+
+[Install]
+WantedBy=multi-user.target

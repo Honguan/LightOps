@@ -1,0 +1,9 @@
+name: npm
+display_name: npm
+description: Node.js package manager
+category: runtime
+packages: {apt-get: [npm], dnf: [npm], yum: [npm]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

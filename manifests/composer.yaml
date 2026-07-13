@@ -1,0 +1,9 @@
+name: composer
+display_name: Composer
+description: PHP dependency manager
+category: deployment-tool
+packages: {apt-get: [composer], dnf: [composer], yum: [composer]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

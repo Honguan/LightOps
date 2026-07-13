@@ -1,0 +1,9 @@
+name: mongodb
+display_name: MongoDB
+description: Document-oriented database
+category: database
+packages: {apt-get: [mongodb-org], dnf: [mongodb-org], yum: [mongodb-org]}
+service: {name: mongod}
+ports: [27017]
+config_paths: [/etc/mongod.conf]
+log_paths: [/var/log/mongodb]

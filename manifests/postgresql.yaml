@@ -1,0 +1,9 @@
+name: postgresql
+display_name: PostgreSQL
+description: Object-relational database server
+category: database
+packages: {apt-get: [postgresql], dnf: [postgresql-server], yum: [postgresql-server]}
+service: {name: postgresql}
+ports: [5432]
+config_paths: [/etc/postgresql, /var/lib/pgsql/data]
+log_paths: [/var/log/postgresql]

@@ -1,0 +1,9 @@
+name: redis
+display_name: Redis
+description: In-memory data store
+category: database
+packages: {apt-get: [redis-server], dnf: [redis], yum: [redis]}
+service: {name: redis-server}
+ports: [6379]
+config_paths: [/etc/redis/redis.conf]
+log_paths: [/var/log/redis]

@@ -1,0 +1,9 @@
+name: php
+display_name: PHP
+description: PHP runtime and FPM
+category: runtime
+packages: {apt-get: [php, php-fpm, php-cli], dnf: [php, php-fpm, php-cli], yum: [php, php-fpm, php-cli]}
+service: {name: php-fpm}
+ports: []
+config_paths: [/etc/php]
+log_paths: [/var/log/php-fpm]

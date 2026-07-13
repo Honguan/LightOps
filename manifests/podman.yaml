@@ -1,0 +1,9 @@
+name: podman
+display_name: Podman
+description: Daemonless container engine
+category: container
+packages: {apt-get: [podman], dnf: [podman], yum: [podman]}
+service: {}
+ports: []
+config_paths: [/etc/containers]
+log_paths: []

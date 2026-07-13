@@ -1,0 +1,9 @@
+name: mariadb
+display_name: MariaDB
+description: Relational database server
+category: database
+packages: {apt-get: [mariadb-server], dnf: [mariadb-server], yum: [mariadb-server]}
+service: {name: mariadb}
+ports: [3306]
+config_paths: [/etc/mysql, /etc/my.cnf.d]
+log_paths: [/var/log/mysql, /var/log/mariadb]

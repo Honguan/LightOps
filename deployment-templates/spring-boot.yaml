@@ -1,0 +1,3 @@
+name: Java Spring Boot
+commands:
+  - [./mvnw, package, -DskipTests]

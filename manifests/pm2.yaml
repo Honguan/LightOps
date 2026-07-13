@@ -1,0 +1,13 @@
+name: pm2
+display_name: PM2
+description: Node.js process manager
+category: deployment-tool
+packages: {apt-get: [pm2], dnf: [pm2], yum: [pm2]}
+commands:
+  apt-get: {install: [npm, install, -g, pm2], update: [npm, update, -g, pm2], remove: [npm, uninstall, -g, pm2]}
+  dnf: {install: [npm, install, -g, pm2], update: [npm, update, -g, pm2], remove: [npm, uninstall, -g, pm2]}
+  yum: {install: [npm, install, -g, pm2], update: [npm, update, -g, pm2], remove: [npm, uninstall, -g, pm2]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

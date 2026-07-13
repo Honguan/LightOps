@@ -1,0 +1,9 @@
+name: unzip
+display_name: unzip
+description: ZIP archive extractor
+category: deployment-tool
+packages: {apt-get: [unzip], dnf: [unzip], yum: [unzip]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

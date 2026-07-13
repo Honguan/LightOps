@@ -1,0 +1,9 @@
+name: git
+display_name: Git
+description: Distributed version control
+category: deployment-tool
+packages: {apt-get: [git], dnf: [git], yum: [git]}
+service: {}
+ports: []
+config_paths: [/etc/gitconfig]
+log_paths: []

@@ -1,0 +1,9 @@
+name: yarn
+display_name: Yarn
+description: JavaScript package manager
+category: runtime
+packages: {apt-get: [yarnpkg], dnf: [yarnpkg], yum: [yarnpkg]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

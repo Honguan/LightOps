@@ -1,0 +1,2 @@
+Defaults:lightops !requiretty
+lightops ALL=(root) NOPASSWD: /opt/lightops/current/venv/bin/lightops-privileged *

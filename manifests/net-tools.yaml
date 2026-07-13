@@ -1,0 +1,9 @@
+name: net-tools
+display_name: net-tools
+description: Classic Linux networking utilities
+category: system-tool
+packages: {apt-get: [net-tools], dnf: [net-tools], yum: [net-tools]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

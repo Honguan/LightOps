@@ -1,0 +1,9 @@
+name: jq
+display_name: jq
+description: Command-line JSON processor
+category: deployment-tool
+packages: {apt-get: [jq], dnf: [jq], yum: [jq]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

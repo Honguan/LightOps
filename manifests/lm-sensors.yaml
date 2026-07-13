@@ -1,0 +1,9 @@
+name: lm-sensors
+display_name: lm-sensors
+description: Hardware sensor monitoring tools
+category: system-tool
+packages: {apt-get: [lm-sensors], dnf: [lm_sensors], yum: [lm_sensors]}
+service: {}
+ports: []
+config_paths: [/etc/sensors3.conf]
+log_paths: []

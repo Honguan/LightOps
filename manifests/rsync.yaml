@@ -1,0 +1,9 @@
+name: rsync
+display_name: rsync
+description: Incremental file transfer utility
+category: deployment-tool
+packages: {apt-get: [rsync], dnf: [rsync], yum: [rsync]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

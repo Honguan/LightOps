@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm, cache-dependency-path: frontend/package-lock.json}
+      - run: npm ci && npm run build
+        working-directory: frontend
+      - name: Build verified release archives
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          test "$(cat VERSION)" = "$version"
+          mkdir -p artifacts/package
+          rsync -a --exclude .git --exclude artifacts --exclude node_modules --exclude .pytest_cache ./ artifacts/package/
+          for target in "lightops-$version" "lightops-$version-amd64" "lightops-$version-arm64"; do
+            tar -czf "artifacts/$target.tar.gz" -C artifacts package
+            (cd artifacts && sha256sum "$target.tar.gz" > "$target.tar.gz.sha256")
+          done
+          cp VERSION artifacts/VERSION
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.sha256
+            artifacts/VERSION
+          generate_release_notes: true

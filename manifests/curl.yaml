@@ -1,0 +1,9 @@
+name: curl
+display_name: curl
+description: Command-line URL transfer tool
+category: deployment-tool
+packages: {apt-get: [curl], dnf: [curl], yum: [curl]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

@@ -1,0 +1,9 @@
+name: caddy
+display_name: Caddy
+description: Automatic HTTPS web server
+category: web-server
+packages: {apt-get: [caddy], dnf: [caddy], yum: [caddy]}
+service: {name: caddy}
+ports: [80, 443]
+config_paths: [/etc/caddy/Caddyfile]
+log_paths: [/var/log/caddy]

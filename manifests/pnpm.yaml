@@ -1,0 +1,13 @@
+name: pnpm
+display_name: pnpm
+description: Fast JavaScript package manager
+category: deployment-tool
+packages: {apt-get: [pnpm], dnf: [pnpm], yum: [pnpm]}
+commands:
+  apt-get: {install: [npm, install, -g, pnpm], update: [npm, update, -g, pnpm], remove: [npm, uninstall, -g, pnpm]}
+  dnf: {install: [npm, install, -g, pnpm], update: [npm, update, -g, pnpm], remove: [npm, uninstall, -g, pnpm]}
+  yum: {install: [npm, install, -g, pnpm], update: [npm, update, -g, pnpm], remove: [npm, uninstall, -g, pnpm]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []

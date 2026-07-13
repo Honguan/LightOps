@@ -1,0 +1,9 @@
+name: pipx
+display_name: pipx
+description: Isolated Python application installer
+category: deployment-tool
+packages: {apt-get: [pipx], dnf: [pipx], yum: [pipx]}
+service: {}
+ports: []
+config_paths: []
+log_paths: []
