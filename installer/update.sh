@@ -4,7 +4,7 @@ set -Eeuo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=common.sh
 source "$SCRIPT_DIR/common.sh"
-REPOSITORY="${LIGHTOPS_REPOSITORY:-https://github.com/<owner>/lightops}"
+REPOSITORY="${LIGHTOPS_REPOSITORY:-https://github.com/Honguan/LightOps}"
 CHANNEL="stable"
 REQUESTED_VERSION=""
 CHECK_ONLY=false
