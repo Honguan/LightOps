@@ -16,6 +16,7 @@ done
 
 require_root
 load_config
+acquire_transition_lock
 load_os
 mkdir -p "$LOG_DIR"
 touch "$LOG_DIR/install.log"
@@ -41,9 +42,6 @@ if [[ ! -f "$release_dir/frontend/dist/index.html" ]]; then
   npm --prefix "$release_dir/frontend" install --no-audit --no-fund
   npm --prefix "$release_dir/frontend" run build
 fi
-"$release_dir/venv/bin/lightops-migrate" up
-chown -R lightops:lightops "$DATA_DIR" "$LOG_DIR" "$BACKUP_DIR"
-
 if [[ ! -f "$CONFIG_DIR/lightops.env" ]]; then
   install -m 0640 -o root -g lightops "$SOURCE_DIR/systemd/lightops.env" "$CONFIG_DIR/lightops.env"
 fi
@@ -55,12 +53,8 @@ fi
 install -m 0644 "$SOURCE_DIR/systemd/lightops.service" /etc/systemd/system/lightops.service
 install -m 0440 "$SOURCE_DIR/systemd/lightops.sudoers" /etc/sudoers.d/lightops
 visudo -cf /etc/sudoers.d/lightops
-atomic_link "$LIGHTOPS_ROOT/releases/$VERSION" "$LIGHTOPS_ROOT/current"
+transition_release install "$VERSION"
 ln -sfn "$LIGHTOPS_ROOT/current/venv/bin/lightops" /usr/local/bin/lightops
-systemctl daemon-reload
-systemctl enable --now lightops
-health_check || { journalctl -u lightops -n 50 --no-pager; exit 1; }
-prune_releases
 
 echo "LightOps $VERSION installed successfully."
 echo "Management URL: http://$(hostname -I | awk '{print $1}'):9080"
