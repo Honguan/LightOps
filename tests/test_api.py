@@ -56,3 +56,9 @@ def test_daily_report_has_health_score() -> None:
     assert response.status_code == 200
     assert 0 <= response.json()["health_score"] <= 100
     assert "generated_at" in response.json()
+    assert "abnormal_processes" in response.json()
+    assert "service_stops" in response.json()
+    assert "docker_anomalies" in response.json()
+    assert "backup_results" in response.json()
+    assert "deployment_results" in response.json()
+    assert response.json()["alert_count"] == len(response.json()["alerts"])

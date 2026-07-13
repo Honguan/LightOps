@@ -13,6 +13,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 require_root
+load_config
 current="$(basename "$(readlink -f "$LIGHTOPS_ROOT/current")")"
 if [[ -z "$VERSION" ]]; then
   VERSION="$(find "$LIGHTOPS_ROOT/releases" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort -Vr | grep -Fxv "$current" | head -n1)"

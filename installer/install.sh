@@ -15,6 +15,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 require_root
+load_config
 load_os
 mkdir -p "$LOG_DIR"
 touch "$LOG_DIR/install.log"
@@ -41,6 +42,7 @@ if [[ ! -f "$release_dir/frontend/dist/index.html" ]]; then
   npm --prefix "$release_dir/frontend" run build
 fi
 "$release_dir/venv/bin/lightops-migrate" up
+chown -R lightops:lightops "$DATA_DIR" "$LOG_DIR" "$BACKUP_DIR"
 
 if [[ ! -f "$CONFIG_DIR/lightops.env" ]]; then
   install -m 0640 -o root -g lightops "$SOURCE_DIR/systemd/lightops.env" "$CONFIG_DIR/lightops.env"

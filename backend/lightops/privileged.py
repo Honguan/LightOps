@@ -34,6 +34,8 @@ def _dispatch(operations: Operations, arguments: list[str]) -> object:
         return operations.service_action(arguments[2], arguments[1])
     if len(arguments) == 2 and arguments == ["docker", "list"]:
         return operations.containers()
+    if len(arguments) == 3 and arguments[:2] == ["docker", "logs"]:
+        return operations.container_logs(arguments[2])
     if len(arguments) == 3 and arguments[0] == "docker":
         return operations.container_action(arguments[2], arguments[1])
     raise ValueError("unsupported privileged operation")

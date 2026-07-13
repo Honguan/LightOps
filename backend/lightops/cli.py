@@ -50,14 +50,14 @@ def build_parser() -> argparse.ArgumentParser:
     rollback.add_argument("--version")
 
     backup = commands.add_parser("backup")
-    backup.add_argument("name")
-    backup.add_argument("sources", nargs="+")
+    backup.add_argument("name", nargs="?")
+    backup.add_argument("sources", nargs="*")
     restore = commands.add_parser("restore")
     restore.add_argument("filename")
     restore.add_argument("target")
 
     config = commands.add_parser("config")
-    config_commands = config.add_subparsers(dest="config_action", required=True)
+    config_commands = config.add_subparsers(dest="config_action")
     config_set = config_commands.add_parser("set")
     config_set.add_argument("key", choices=("auto_update", "update_channel"))
     config_set.add_argument("value")
@@ -126,7 +126,12 @@ def _dispatch(args: argparse.Namespace) -> int:
     elif args.command == "doctor":
         _doctor()
     elif args.command == "backup":
-        _print(api_request("backups", "POST", {"name": args.name, "sources": args.sources}))
+        settings = load_settings()
+        name = args.name or "automatic"
+        sources = args.sources or list(settings.backup_sources)
+        if not sources:
+            raise RuntimeError("no backup sources configured; provide paths or set LIGHTOPS_BACKUP_SOURCES")
+        _print(api_request("backups", "POST", {"name": name, "sources": sources}))
     elif args.command == "restore":
         _print(api_request(f"backups/{args.filename}/restore", "POST", {"target": args.target}))
     elif args.command == "app":
@@ -136,7 +141,10 @@ def _dispatch(args: argparse.Namespace) -> int:
     elif args.command == "project":
         _project(args)
     elif args.command == "config":
-        _config(args.key, args.value)
+        if args.config_action == "set":
+            _config(args.key, args.value)
+        else:
+            _show_config()
     elif args.command == "reset-password":
         _reset_password()
     return 0
@@ -252,6 +260,21 @@ def _config(key: str, value: str) -> None:
     entries[key.upper()] = value
     config_path.write_text("".join(f"{item}={entries[item]}\n" for item in sorted(entries)), encoding="utf-8")
     print(f"{key}={value}")
+
+
+def _show_config() -> None:
+    settings = load_settings()
+    _print(
+        {
+            "data_dir": str(settings.data_dir),
+            "log_dir": str(settings.log_dir),
+            "backup_dir": str(settings.backup_dir),
+            "backup_sources": list(settings.backup_sources),
+            "backup_retention": settings.backup_retention,
+            "report_hour": settings.report_hour,
+            "ip_allowlist": list(settings.ip_allowlist),
+        }
+    )
 
 
 def _doctor() -> None:

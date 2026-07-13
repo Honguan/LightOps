@@ -29,8 +29,12 @@ export interface AppManifest {
   description: string
   category: string
   installed: boolean
+  installed_version?: string
+  available_version?: string
   status: string
   ports: number[]
+  config_paths?: string[]
+  log_paths?: string[]
   service?: { name?: string }
 }
 

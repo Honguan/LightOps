@@ -201,6 +201,16 @@ def docker_action(container_id: str, action: str, operations: Operations = Depen
         raise HTTPException(status_code=500, detail=str(error)) from error
 
 
+@app.get("/api/docker/containers/{container_id}/logs")
+def docker_logs(container_id: str, operations: Operations = Depends(get_operations)) -> dict[str, str]:
+    try:
+        return operations.container_logs(container_id)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error
+    except RuntimeError as error:
+        raise HTTPException(status_code=500, detail=str(error)) from error
+
+
 @app.get("/api/projects", response_model=list[ProjectView])
 def projects(store: Store = Depends(get_store)) -> list[object]:
     return store.projects()
@@ -279,10 +289,33 @@ def alerts() -> list[dict[str, object]]:
 
 
 @app.get("/api/reports/daily")
-def report_daily() -> dict[str, object]:
+def report_daily(
+    operations: Operations = Depends(get_operations),
+    backup_service: BackupService = Depends(get_backup_service),
+    store: Store = Depends(get_store),
+) -> dict[str, object]:
     snapshot = system_snapshot()
     failures = ssh_failures()
-    return daily_report(snapshot, disk_alerts(snapshot), failures, load_today(load_settings().data_dir))
+    rankings = process_rankings()
+    abnormal = [item for item in rankings["by_cpu"] if item["cpu_percent"] >= 80]
+    abnormal.extend(item for item in rankings["by_memory"] if item["memory_percent"] >= 50 and item not in abnormal)
+    services = operations.service_statuses()
+    containers = operations.containers()
+    deployments = store.recent_deployments()
+    return daily_report(
+        snapshot,
+        disk_alerts(snapshot),
+        failures,
+        load_today(load_settings().data_dir),
+        abnormal_processes=abnormal,
+        service_stops=[item for item in services if not item["active"]],
+        docker_anomalies=[item for item in containers if not str(item["status"]).lower().startswith("up")],
+        backup_results=backup_service.list()[:20],
+        deployment_results=[
+            {"project_id": item.project_id, "result": item.result, "finished_at": item.finished_at.isoformat()}
+            for item in deployments
+        ],
+    )
 
 
 @app.get("/api/audit-logs")

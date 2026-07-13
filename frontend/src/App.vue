@@ -98,9 +98,19 @@ async function createBackup() {
   }
 }
 
+async function showLogs(path: string, title: string) {
+  try {
+    const result = await request<{ logs?: string } | Array<{ path: string; content: string }>>(path)
+    const content = Array.isArray(result)
+      ? result.map(item => `${item.path}\n${item.content}`).join('\n\n')
+      : result.logs || '目前沒有日誌'
+    await ElMessageBox.alert(content, title, { customClass: 'log-dialog', confirmButtonText: '關閉' })
+  } catch (reason) {
+    ElMessage.error(reason instanceof Error ? reason.message : '無法取得日誌')
+  }
+}
+
 const bytes = (value: number) => `${(value / 1024 / 1024 / 1024).toFixed(2)} GB`
-const appAction = (item: AppManifest) => item.installed ? (item.service?.name ? 'restart' : 'update') : 'install'
-const appActionLabel = (item: AppManifest) => item.installed ? (item.service?.name ? '重新啟動' : '更新') : '安裝'
 
 onMounted(async () => {
   if (authenticated.value) await load()
@@ -156,10 +166,10 @@ onBeforeUnmount(() => window.clearInterval(timer))
         <el-table :data="services"><el-table-column prop="name" label="服務" /><el-table-column prop="status" label="狀態" /><el-table-column label="操作"><template #default="scope"><el-button size="small" @click="action(`services/${scope.row.name}/restart`, `重新啟動 ${scope.row.name}`, true)">重新啟動</el-button></template></el-table-column></el-table>
       </section>
       <section v-else-if="active === 'docker'" class="panel table-panel">
-        <el-table :data="containers"><el-table-column prop="name" label="容器" /><el-table-column prop="image" label="映像" /><el-table-column prop="status" label="狀態" /><el-table-column label="操作"><template #default="scope"><el-button size="small" @click="action(`docker/containers/${scope.row.id}/restart`, `重新啟動 ${scope.row.name}`, true)">重新啟動</el-button></template></el-table-column></el-table>
+        <el-table :data="containers"><el-table-column prop="name" label="容器" /><el-table-column prop="image" label="映像" /><el-table-column prop="status" label="狀態" /><el-table-column label="操作" width="300"><template #default="scope"><el-button size="small" @click="action(`docker/containers/${scope.row.id}/start`, `啟動 ${scope.row.name}`)">啟動</el-button><el-button size="small" @click="action(`docker/containers/${scope.row.id}/stop`, `停止 ${scope.row.name}`, true)">停止</el-button><el-button size="small" @click="action(`docker/containers/${scope.row.id}/restart`, `重新啟動 ${scope.row.name}`, true)">重啟</el-button><el-button size="small" @click="showLogs(`docker/containers/${scope.row.id}/logs`, `${scope.row.name} 日誌`)">日誌</el-button></template></el-table-column></el-table>
       </section>
       <section v-else-if="active === 'apps'" class="cards">
-        <article v-for="item in apps" :key="item.name" class="app-card"><div><small>{{ item.category }}</small><h3>{{ item.display_name }}</h3><p>{{ item.description }}</p></div><div class="app-footer"><el-tag :type="item.installed ? 'success' : 'info'">{{ item.installed ? item.status : '未安裝' }}</el-tag><el-button size="small" @click="action(`apps/${item.name}/${appAction(item)}`, `${appActionLabel(item)} ${item.display_name}`, true)">{{ appActionLabel(item) }}</el-button></div></article>
+        <article v-for="item in apps" :key="item.name" class="app-card"><div><small>{{ item.category }}</small><h3>{{ item.display_name }}</h3><p>{{ item.description }}</p><p v-if="item.installed_version">版本：{{ item.installed_version }}<span v-if="item.available_version">（可用 {{ item.available_version }}）</span></p><p v-if="item.ports?.length">連接埠：{{ item.ports.join('、') }}</p><p v-if="item.config_paths?.length">設定：{{ item.config_paths.join('、') }}</p></div><div class="app-footer"><el-tag :type="item.installed ? 'success' : 'info'">{{ item.installed ? item.status : '未安裝' }}</el-tag><template v-if="item.installed"><el-button size="small" @click="action(`apps/${item.name}/update`, `更新 ${item.display_name}`, true)">更新</el-button><el-button v-if="item.service?.name" size="small" @click="action(`apps/${item.name}/start`, `啟動 ${item.display_name}`)">啟動</el-button><el-button v-if="item.service?.name" size="small" @click="action(`apps/${item.name}/stop`, `停止 ${item.display_name}`, true)">停止</el-button><el-button v-if="item.service?.name" size="small" @click="action(`apps/${item.name}/restart`, `重新啟動 ${item.display_name}`, true)">重啟</el-button><el-button v-if="item.log_paths?.length" size="small" @click="showLogs(`apps/${item.name}/logs`, `${item.display_name} 日誌`)">日誌</el-button><el-button size="small" type="danger" @click="action(`apps/${item.name}/remove`, `移除 ${item.display_name}`, true)">移除</el-button></template><el-button v-else size="small" @click="action(`apps/${item.name}/install`, `安裝 ${item.display_name}`, true)">安裝</el-button></div></article>
       </section>
       <section v-else-if="active === 'projects'" class="panel table-panel">
         <el-table :data="projects"><el-table-column prop="name" label="專案" /><el-table-column prop="project_type" label="類型" /><el-table-column prop="branch" label="分支" /><el-table-column prop="deploy_path" label="部署路徑" /><el-table-column label="操作"><template #default="scope"><el-button size="small" type="primary" @click="action(`projects/${scope.row.code}/deploy`, `部署 ${scope.row.name}`, true)">部署</el-button><el-button size="small" @click="action(`projects/${scope.row.code}/rollback`, `回滾 ${scope.row.name}`, true)">回滾</el-button></template></el-table-column></el-table>

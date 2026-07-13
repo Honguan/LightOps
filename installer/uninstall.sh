@@ -15,6 +15,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 require_root
+load_config
 if ! $CONFIRMED; then
   [[ -t 0 ]] || { echo "Use --yes for non-interactive removal." >&2; exit 2; }
   read -r -p "Type REMOVE to uninstall LightOps: " answer

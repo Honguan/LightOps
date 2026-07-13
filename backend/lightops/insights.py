@@ -91,6 +91,12 @@ def daily_report(
     alerts: list[dict[str, Any]],
     failures: list[dict[str, str]],
     samples: list[dict[str, Any]] | None = None,
+    *,
+    abnormal_processes: list[dict[str, Any]] | None = None,
+    service_stops: list[dict[str, Any]] | None = None,
+    docker_anomalies: list[dict[str, Any]] | None = None,
+    backup_results: list[dict[str, Any]] | None = None,
+    deployment_results: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     samples = samples or [snapshot]
     cpu_values = [float(sample.get("cpu_percent", 0)) for sample in samples]
@@ -119,5 +125,11 @@ def daily_report(
         "disks": snapshot.get("disks", []),
         "network": snapshot.get("network", {}),
         "ssh_failed_logins": len(failures),
+        "abnormal_processes": abnormal_processes or [],
+        "service_stops": service_stops or [],
+        "docker_anomalies": docker_anomalies or [],
+        "backup_results": backup_results or [],
+        "deployment_results": deployment_results or [],
+        "alert_count": len(alerts),
         "alerts": alerts,
     }

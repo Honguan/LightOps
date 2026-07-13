@@ -8,6 +8,17 @@ LOG_DIR="${LIGHTOPS_LOG_DIR:-/var/log/lightops}"
 BACKUP_DIR="${LIGHTOPS_BACKUP_DIR:-/var/backups/lightops}"
 SERVICE_NAME="lightops"
 
+load_config() {
+  local line
+  [[ -r "$CONFIG_DIR/lightops.env" ]] || return 0
+  while IFS= read -r line; do
+    [[ "$line" =~ ^(LIGHTOPS_[A-Z0-9_]+|AUTO_UPDATE|UPDATE_CHANNEL)= ]] && export "$line"
+  done < "$CONFIG_DIR/lightops.env"
+  DATA_DIR="${LIGHTOPS_DATA_DIR:-$DATA_DIR}"
+  LOG_DIR="${LIGHTOPS_LOG_DIR:-$LOG_DIR}"
+  BACKUP_DIR="${LIGHTOPS_BACKUP_DIR:-$BACKUP_DIR}"
+}
+
 require_root() {
   if [[ ${EUID} -ne 0 ]]; then
     echo "This command must run as root (use sudo)." >&2

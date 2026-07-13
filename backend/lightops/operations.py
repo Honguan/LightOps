@@ -172,6 +172,16 @@ class Operations:
             raise RuntimeError(error or output)
         return {"id": container_id, "action": action, "status": "ok"}
 
+    def container_logs(self, container_id: str, lines: int = 200) -> dict[str, str]:
+        if not container_id.replace("-", "").replace("_", "").isalnum():
+            raise ValueError("invalid container id")
+        if self.privileged:
+            return self._privileged(["docker", "logs", container_id])
+        code, output, error = self.runner(["docker", "logs", "--tail", str(lines), container_id])
+        if code:
+            raise RuntimeError(error or output)
+        return {"id": container_id, "logs": "\n".join(item for item in (output, error) if item)}
+
     def _package_manager(self) -> PackageManager:
         if self._packages is None:
             self._packages = detect_package_manager(self.runner)

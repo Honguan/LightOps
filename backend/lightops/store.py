@@ -126,6 +126,13 @@ class Store:
                 session.expunge(deployment)
             return deployments
 
+    def recent_deployments(self, limit: int = 20) -> list[Deployment]:
+        with Session(self.engine) as session:
+            deployments = list(session.scalars(select(Deployment).order_by(Deployment.id.desc()).limit(limit)))
+            for deployment in deployments:
+                session.expunge(deployment)
+            return deployments
+
     def set_password(self, username: str, password: str) -> None:
         if len(password) < 12:
             raise ValueError("password must be at least 12 characters")
