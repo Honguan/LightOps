@@ -1,3 +1,4 @@
+from lightops import __version__
 from lightops.cli import main
 
 
@@ -5,7 +6,7 @@ def test_version_command(capsys) -> None:
     result = main(["version"])
 
     assert result == 0
-    assert capsys.readouterr().out.strip() == "LightOps 0.1.0"
+    assert capsys.readouterr().out.strip() == f"LightOps {__version__}"
 
 
 def test_status_command_reports_api_health(monkeypatch, capsys) -> None:

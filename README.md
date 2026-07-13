@@ -82,3 +82,5 @@ pytest
 bash -n install.sh installer/*.sh
 cd frontend && npm run typecheck && npm run build
 ```
+
+`master` 的 CI 通過後會自動增加 patch 版本、同步版本檔、建立標籤並發布具 SHA-256 的 GitHub Release。

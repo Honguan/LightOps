@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 
+from lightops import __version__
 from lightops.api import app
 
 
@@ -10,7 +11,7 @@ def test_health_endpoint_reports_version() -> None:
     response = client.get("/api/health")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "version": "0.1.0"}
+    assert response.json() == {"status": "ok", "version": __version__}
 
 
 def test_system_endpoint_exposes_required_metrics() -> None:

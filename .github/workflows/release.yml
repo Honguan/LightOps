@@ -3,32 +3,127 @@ name: Release
 on:
   push:
     tags: ['v*.*.*']
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: release-master
+  cancel-in-progress: false
+
 jobs:
   release:
+    if: >-
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm, cache-dependency-path: frontend/package-lock.json}
-      - run: npm ci && npm run build
-        working-directory: frontend
-      - name: Build verified release archives
+      - name: Select next patch version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
-          test "$(cat VERSION)" = "$version"
+          git fetch origin master --tags
+          if [[ "$EVENT_NAME" == push ]]; then
+            version="${REF_NAME#v}"
+            [[ "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+            test "$(cat VERSION)" = "$version"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "automated=false" >> "$GITHUB_OUTPUT"
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          remote_sha="$(git rev-parse origin/master)"
+          if [[ "$remote_sha" != "$SOURCE_SHA" ]]; then
+            subject="$(git show -s --format=%s "$remote_sha")"
+            parent="$(git rev-parse "$remote_sha^")"
+            if [[ "$parent" == "$SOURCE_SHA" && "$subject" =~ ^chore:\ release\ v([0-9]+\.[0-9]+\.[0-9]+)\ \[skip\ ci\]$ ]]; then
+              version="${BASH_REMATCH[1]}"
+              assets="$(gh release view "v$version" --json assets --jq '.assets[].name' 2>/dev/null || true)"
+              complete=true
+              for asset in \
+                "lightops-$version.tar.gz" "lightops-$version.tar.gz.sha256" \
+                "lightops-$version-amd64.tar.gz" "lightops-$version-amd64.tar.gz.sha256" \
+                "lightops-$version-arm64.tar.gz" "lightops-$version-arm64.tar.gz.sha256" \
+                VERSION; do
+                grep -Fxq "$asset" <<<"$assets" || complete=false
+              done
+              if $complete; then
+                echo "publish=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+              git checkout --detach "$remote_sha"
+              echo "publish=true" >> "$GITHUB_OUTPUT"
+              echo "automated=false" >> "$GITHUB_OUTPUT"
+              echo "version=$version" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "A newer master commit exists; its CI run will publish instead."
+            exit 0
+          fi
+          latest="$(git tag --list 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)"
+          current="${latest#v}"
+          IFS=. read -r major minor patch <<<"${current:-0.0.0}"
+          version="$major.$minor.$((patch + 1))"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "automated=true" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Update release version
+        if: steps.version.outputs.automated == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          printf '%s\n' "$VERSION" > VERSION
+          sed -i -E "s/^version = \"[0-9]+\.[0-9]+\.[0-9]+\"/version = \"$VERSION\"/" pyproject.toml
+          sed -i -E "s/^__version__ = \"[0-9]+\.[0-9]+\.[0-9]+\"/__version__ = \"$VERSION\"/" backend/lightops/__init__.py
+          npm version "$VERSION" --no-git-tag-version --prefix frontend
+      - name: Build release assets
+        if: steps.version.outputs.publish == 'true'
+        working-directory: frontend
+        run: npm ci && npm run build
+      - name: Package verified release archives
+        if: steps.version.outputs.publish == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
           mkdir -p artifacts/package
           rsync -a --exclude .git --exclude artifacts --exclude node_modules --exclude .pytest_cache ./ artifacts/package/
-          for target in "lightops-$version" "lightops-$version-amd64" "lightops-$version-arm64"; do
+          for target in "lightops-$VERSION" "lightops-$VERSION-amd64" "lightops-$VERSION-arm64"; do
             tar -czf "artifacts/$target.tar.gz" -C artifacts package
             (cd artifacts && sha256sum "$target.tar.gz" > "$target.tar.gz.sha256")
           done
           cp VERSION artifacts/VERSION
+      - name: Commit and tag version
+        if: steps.version.outputs.automated == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add VERSION pyproject.toml backend/lightops/__init__.py frontend/package.json frontend/package-lock.json
+          git commit -m "chore: release v$VERSION [skip ci]"
+          git tag -a "v$VERSION" -m "LightOps $VERSION"
+          git push --atomic origin HEAD:master "v$VERSION"
       - uses: softprops/action-gh-release@v2
+        if: steps.version.outputs.publish == 'true'
         with:
+          tag_name: v${{ steps.version.outputs.version }}
           files: |
             artifacts/*.tar.gz
             artifacts/*.sha256

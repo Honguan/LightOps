@@ -18,6 +18,7 @@ const projects = ref<Project[]>([])
 const alerts = ref<Alert[]>([])
 const backups = ref<Backup[]>([])
 const backupForm = ref({ name: '', sources: '' })
+const appVersion = __APP_VERSION__
 let timer: number | undefined
 
 const titles: Record<string, string> = {
@@ -141,7 +142,7 @@ onBeforeUnmount(() => window.clearInterval(timer))
       <nav>
         <button v-for="item in [['overview','總覽'],['services','服務'],['docker','Docker'],['apps','軟體中心'],['projects','專案'],['backups','備份']]" :key="item[0]" :class="{ active: active === item[0] }" @click="active = item[0]">{{ item[1] }}</button>
       </nav>
-      <div class="server-state"><span></span><div><strong>本機伺服器</strong><small>LightOps 0.1.0</small></div></div>
+      <div class="server-state"><span></span><div><strong>本機伺服器</strong><small>LightOps {{ appVersion }}</small></div></div>
     </aside>
 
     <main v-loading="loading">
