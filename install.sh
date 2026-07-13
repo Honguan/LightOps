@@ -4,7 +4,7 @@ set -Eeuo pipefail
 REPOSITORY="${LIGHTOPS_REPOSITORY:-https://github.com/Honguan/LightOps}"
 VERSION="${LIGHTOPS_VERSION:-latest}"
 
-if [[ -f "$(dirname "${BASH_SOURCE[0]}")/installer/install.sh" ]]; then
+if [[ -n "${BASH_SOURCE[0]:-}" && -f "$(dirname "${BASH_SOURCE[0]}")/installer/install.sh" ]]; then
   exec bash "$(dirname "${BASH_SOURCE[0]}")/installer/install.sh" "$@"
 fi
 
