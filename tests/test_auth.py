@@ -1,9 +1,18 @@
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 from lightops.api import app, get_store
 from lightops.store import Store
+
+
+def test_password_requires_at_least_six_characters(tmp_path: Path) -> None:
+    store = Store(f"sqlite:///{tmp_path / 'lightops.db'}")
+
+    store.set_password("admin", "123456")
+    with pytest.raises(ValueError, match="at least 6 characters"):
+        store.set_password("admin", "12345")
 
 
 def test_login_protects_api_and_issues_expiring_session(monkeypatch, tmp_path: Path) -> None:

@@ -134,8 +134,8 @@ class Store:
             return deployments
 
     def set_password(self, username: str, password: str) -> None:
-        if len(password) < 12:
-            raise ValueError("password must be at least 12 characters")
+        if len(password) < 6:
+            raise ValueError("password must be at least 6 characters")
         with Session(self.engine) as session:
             user = session.scalar(select(User).where(User.username == username))
             if user is None:
