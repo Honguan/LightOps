@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import platform
+import sys
 import tarfile
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -323,8 +324,9 @@ def audit_logs(store: Store = Depends(get_store)) -> list[dict[str, object]]:
     return store.audit_logs()
 
 
-frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
-if frontend_dist.is_dir():
+frontend_roots = (Path(sys.prefix).resolve().parent, Path(__file__).resolve().parents[2])
+frontend_dist = next((root / "frontend" / "dist" for root in frontend_roots if (root / "frontend" / "dist").is_dir()), None)
+if frontend_dist is not None:
     app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 
